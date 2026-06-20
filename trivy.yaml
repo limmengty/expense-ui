@@ -2,4 +2,4 @@
 # Exit code 0 so Trivy findings don't block the pipeline.
 # Use severity: CRITICAL if you want to block on critical findings only.
 exit-code: 0
-severity: UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL
+severity: HIGH,CRITICAL
