@@ -1,8 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Pencil } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -29,9 +28,10 @@ export function RenameGroupDialog({ groupId, currentName, children }: RenameGrou
   const [name, setName] = useState(currentName);
   const router = useRouter();
 
-  useEffect(() => {
-    if (open) setName(currentName);
-  }, [open, currentName]);
+  function handleOpenChange(next: boolean) {
+    if (next) setName(currentName);
+    setOpen(next);
+  }
 
   const rename = useMutation({
     mutationFn: (newName: string) => renameGroupAction(groupId, newName),
@@ -44,7 +44,7 @@ export function RenameGroupDialog({ groupId, currentName, children }: RenameGrou
   const canSubmit = name.trim() && name.trim() !== currentName;
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-[360px]">
         <DialogHeader>
@@ -72,10 +72,7 @@ export function RenameGroupDialog({ groupId, currentName, children }: RenameGrou
           <Button variant="outline" onClick={() => setOpen(false)}>
             Cancel
           </Button>
-          <Button
-            onClick={() => rename.mutate(name.trim())}
-            disabled={!canSubmit || rename.isPending}
-          >
+          <Button onClick={() => rename.mutate(name.trim())} disabled={!canSubmit || rename.isPending}>
             Save name
           </Button>
         </DialogFooter>

@@ -46,6 +46,7 @@ export default function RegisterPage() {
     defaultValues: { username: '', email: '', password: '', firstName: '', lastName: '' },
   });
 
+  // eslint-disable-next-line react-hooks/incompatible-library -- react-hook-form watch() is not memoizable
   const watchedPassword = form.watch('password');
   const strength = getPasswordStrength(watchedPassword);
 

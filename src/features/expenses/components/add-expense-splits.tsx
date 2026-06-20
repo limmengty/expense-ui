@@ -1,7 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { flushSync } from 'react-dom';
+import { useCallback } from 'react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { formatCurrency } from '@/lib/auth';
@@ -19,59 +18,37 @@ interface AddExpenseSplitsProps {
   onSplitsChange: (splits: SplitEntry[]) => void;
 }
 
+function buildSplits(
+  members: { id: string; name: string }[],
+  splitType: AddExpenseSplitsProps['splitType'],
+  totalAmount: number,
+): SplitEntry[] {
+  if (members.length === 0) return [];
+  return members.map((m) => {
+    if (splitType === 'EQUAL') return { userId: m.id, amount: totalAmount / members.length };
+    if (splitType === 'PERCENTAGE') return { userId: m.id, percentage: 100 / members.length };
+    return { userId: m.id };
+  });
+}
+
 export function AddExpenseSplits({
   members,
   splitType,
   totalAmount,
   onSplitsChange,
 }: AddExpenseSplitsProps) {
-  const [splits, setSplits] = useState<SplitEntry[]>([]);
-  // Stable ref so effects don't need onSplitsChange in their dep array
-  const onSplitsChangeRef = useRef(onSplitsChange);
-  onSplitsChangeRef.current = onSplitsChange;
+  // Derive splits purely from props — no effect needed
+  const splits = buildSplits(members, splitType, totalAmount);
 
-  // Re-initialize whenever members list changes (includes group switch)
-  useEffect(() => {
-    if (members.length === 0) {
-      flushSync(() => {
-        setSplits([]);
-        onSplitsChangeRef.current([]);
-      });
-      return;
-    }
-    const initial = members.map((m) => {
-      if (splitType === 'EQUAL') return { userId: m.id, amount: totalAmount / members.length };
-      if (splitType === 'PERCENTAGE') return { userId: m.id, percentage: 100 / members.length };
-      return { userId: m.id };
-    });
-    flushSync(() => {
-      setSplits(initial);
-      onSplitsChangeRef.current(initial);
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [members]);
-
-  // Recalculate + sync form when amount or split type changes
-  useEffect(() => {
-    if (members.length === 0) return;
-    const updated = members.map((m) => {
-      if (splitType === 'EQUAL') return { userId: m.id, amount: totalAmount / members.length };
-      if (splitType === 'PERCENTAGE') return { userId: m.id, percentage: 100 / members.length };
-      return { userId: m.id };
-    });
-    flushSync(() => {
-      setSplits(updated);
-      onSplitsChangeRef.current(updated);
-    });
-  }, [totalAmount, splitType, members.length, members]);
-
-  const updateSplit = (userId: string, field: 'amount' | 'percentage', value: number) => {
-    setSplits((prev) => {
-      const updated = prev.map((s) => (s.userId === userId ? { ...s, [field]: value } : s));
-      onSplitsChangeRef.current(updated);
-      return updated;
-    });
-  };
+  const updateSplit = useCallback(
+    (userId: string, field: 'amount' | 'percentage', value: number) => {
+      const updated = splits.map((s) =>
+        s.userId === userId ? { ...s, [field]: value } : s,
+      );
+      onSplitsChange(updated);
+    },
+    [splits, onSplitsChange],
+  );
 
   if (members.length === 0) {
     return <p className="text-sm text-muted-foreground">Select a group to see split options</p>;

@@ -51,17 +51,19 @@ interface AppSidebarProps {
   session: UserSession;
 }
 
+function useHydrated() {
+  // React's official hydration-safe pattern — subscribe never fires
+  return React.useSyncExternalStore(() => () => {}, () => true, () => false);
+}
+
 export function AppSidebar({
   session,
   ...props
 }: AppSidebarProps & React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
   const { resolvedTheme, setTheme } = useTheme();
-  const [mounted, setMounted] = React.useState(false);
-
-  React.useEffect(() => setMounted(true), []);
-
-  const isDark = mounted ? resolvedTheme === 'dark' : false;
+  const hydrated = useHydrated();
+  const isDark = hydrated ? resolvedTheme === 'dark' : false;
 
   return (
     <Sidebar collapsible="icon" {...props}>

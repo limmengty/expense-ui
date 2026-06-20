@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Third-party UI component library — lint rules are too strict for generated/shimmed components
+    "src/components/ui/**",
   ]),
 ]);
 

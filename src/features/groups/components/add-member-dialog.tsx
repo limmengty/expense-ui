@@ -33,21 +33,26 @@ export function AddMemberDialog({ groupId, existingMemberIds, children }: AddMem
   const [addingIds, setAddingIds] = useState<Set<string>>(new Set());
   const [addedIds, setAddedIds] = useState<Set<string>>(new Set());
 
-  useEffect(() => {
-    if (!open) {
+  function handleOpenChange(next: boolean) {
+    if (!next) {
       setQuery('');
       setResults([]);
       setAddedIds(new Set());
       setAddingIds(new Set());
-      return;
     }
-  }, [open]);
+    setOpen(next);
+  }
+
+  function handleQueryChange(value: string) {
+    setQuery(value);
+    if (value.trim().length < 2) {
+      // Synchronous clear — no cascading render, effect is not needed
+      setResults([]);
+    }
+  }
 
   useEffect(() => {
-    if (query.trim().length < 2) {
-      setResults([]);
-      return;
-    }
+    if (query.trim().length < 2) return;
     const timer = setTimeout(() => {
       startSearch(async () => {
         const data = await searchUsersAction(query.trim());
@@ -83,7 +88,7 @@ export function AddMemberDialog({ groupId, existingMemberIds, children }: AddMem
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-[420px]">
         <DialogHeader>
@@ -100,7 +105,7 @@ export function AddMemberDialog({ groupId, existingMemberIds, children }: AddMem
               className="pl-9"
               placeholder="Search by name or email..."
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) => handleQueryChange(e.target.value)}
               autoFocus
             />
           </div>

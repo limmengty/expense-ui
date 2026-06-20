@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useForm, SubmitHandler, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -182,9 +183,9 @@ export function AddExpenseDialog({ children, groups = [], defaultGroupId }: AddE
             {groups.length === 0 ? (
               <p className="rounded-md border border-dashed p-3 text-center text-sm text-muted-foreground">
                 No groups yet.{' '}
-                <a href="/groups" className="underline underline-offset-2 hover:text-foreground">
+                <Link href="/groups" className="underline underline-offset-2 hover:text-foreground">
                   Create a group
-                </a>{' '}
+                </Link>{' '}
                 first — expenses are always split among group members.
               </p>
             ) : (

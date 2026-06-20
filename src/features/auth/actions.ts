@@ -95,9 +95,7 @@ export async function refreshTokenAction(): Promise<{ success: boolean; error?: 
     });
 
     return { success: true };
-  } catch (err) {
-    return { success: false, error: 'Session expired' };
-  }
+  } catch { return { success: false, error: "Session expired" }; }
 }
 
 // Get current session for use in Server Components

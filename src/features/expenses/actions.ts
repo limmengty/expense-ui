@@ -16,7 +16,6 @@ export async function getExpensesAction(filters: ExpenseFilters = {}) {
 export async function createExpenseAction(formData: unknown) {
   // NOTE: Schema validation is done by the form (react-hook-form + zod).
   // The form already transforms values into CreateExpensePayload shape before calling this action.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const payload = formData as CreateExpensePayload;
 
   try {

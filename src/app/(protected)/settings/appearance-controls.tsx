@@ -3,13 +3,18 @@
 import { useTheme } from 'next-themes';
 import { Monitor, Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useEffect, useState } from 'react';
+import * as React from 'react';
+
+function useHydrated() {
+  // React's official hydration-safe pattern — subscribe never fires, so no cascading renders.
+  // This is the canonical next-themes approach to avoid SSR/client mismatch.
+  return React.useSyncExternalStore(() => () => {}, () => true, () => false);
+}
 
 export function AppearanceControls() {
   const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
-  if (!mounted) return <div className="h-9" />;
+  const hydrated = useHydrated();
+  if (!hydrated) return <div className="h-9" />;
 
   return (
     <div className="flex gap-2">
