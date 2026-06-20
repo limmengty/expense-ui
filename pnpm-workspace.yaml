@@ -1,0 +1,14 @@
+packages:
+  - "."
+  - "app"
+  - "components"
+  - "hooks"
+  - "lib"
+
+allowBuilds:
+  sharp: true
+  unrs-resolver: true
+
+onlyBuiltDependencies:
+  - sharp
+  - unrs-resolver

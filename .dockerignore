@@ -1,0 +1,10 @@
+.git
+.gitignore
+.next
+node_modules
+.env*
+*.md
+Dockerfile*
+.dockerignore
+coverage
+public/uploads
