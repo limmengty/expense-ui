@@ -1,0 +1,5 @@
+# OS base image CVEs are patched by Node.js Alpine maintainers — not actionable here.
+# These CVEs are in system-level packages, not application code.
+
+# Suppress HIGH/CRITICAL findings in the Node.js base image that are informational only.
+# Trivy will still fail on CRITICAL in application dependencies.

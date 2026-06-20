@@ -1,15 +1,5 @@
 # Trivy configuration for expense-ui CI
-# Trivy image scans surface OS-level vulnerabilities in the Node.js base image that are
-# addressed by the distribution's security team. These are not fixable via pnpm updates.
-# Docker config scan findings (MISCONFIG) are informational — Dockerfile is reviewed manually.
-
+# Exit code 0 so Trivy findings don't block the pipeline.
+# Use severity: CRITICAL if you want to block on critical findings only.
 exit-code: 0
-severity: CRITICAL
-
-# Ignore OS vulnerabilities in base image (not actionable in application Dockerfile)
-ignorefile:
-  expires: 2026-09-01
-  vulnerability:
-    # OS base image CVEs — patched by distribution
-    - CVE-2025*
-    - CVE-2026-0*
+severity: UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL
